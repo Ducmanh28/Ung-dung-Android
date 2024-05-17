@@ -18,9 +18,22 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.ungdungbanhang.R;
+import com.example.ungdungbanhang.adapter.LoaispAdapter;
+import com.example.ungdungbanhang.model.LoaiSP;
+import com.example.ungdungbanhang.ultil.Server;
+import com.example.ungdungbanhang.ultil.checkconnect;
 import com.google.android.material.navigation.NavigationView;
 import com.squareup.picasso.Picasso;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -32,6 +45,11 @@ public class MainActivity extends AppCompatActivity {
     NavigationView navigationView;
     ListView listViewmanhinhchinh;
     DrawerLayout drawerLayout;
+    ArrayList<LoaiSP> mangloaisp;
+    LoaispAdapter loaispAdapter;
+    int id = 0;
+    String tenloaisp = "";
+    String hinhanhloaisp = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,8 +61,48 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
         Anhxa();
-        ActionBar();
-        ActionViewFlipper();
+        if(checkconnect.isNetworkAvailable(getApplicationContext())){
+            ActionBar();
+            ActionViewFlipper();
+            GetDuLieuLoaisp();
+        }else {
+            checkconnect.ShowToast_Short(getApplicationContext(),"Bạn hãy kiểm tra lại kết nối");
+        }
+
+    }
+
+
+    private void GetDuLieuLoaisp() {
+        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Server.duongDanLoaiSanPham, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                if(response != null){
+                    for (int i =0;i<response.length();i++){
+                        try {
+                            JSONObject jsonObject = response.getJSONObject(i);
+                            id = jsonObject.getInt("id");
+                            tenloaisp = jsonObject.getString("tenloaisp");
+                            hinhanhloaisp = jsonObject.getString(("hinhanhloaisp"));
+                            mangloaisp.add(new LoaiSP(id,tenloaisp,hinhanhloaisp));
+                            loaispAdapter.notifyDataSetChanged();
+                        } catch (JSONException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    mangloaisp.add(3,new LoaiSP(0,"Liên Hệ","https://cdn1.iconfinder.com/data/icons/mix-color-3/502/Untitled-12-512.png"));
+                    mangloaisp.add(4,new LoaiSP(0,"Thông Tin Cá Nhân","https://cdn0.iconfinder.com/data/icons/leto-insurance-1/64/insurance_man_shield_man-256.png"));
+
+
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                checkconnect.ShowToast_Short(getApplicationContext(), volleyError.toString());
+            }
+        });
+        requestQueue.add(jsonArrayRequest);
     }
 
     private void ActionViewFlipper() {
@@ -85,5 +143,10 @@ public class MainActivity extends AppCompatActivity {
         navigationView = (NavigationView) findViewById(R.id.navigationview);
         listViewmanhinhchinh = (ListView) findViewById(R.id.listviewmanhinhchinh);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawerlayout);
+        mangloaisp = new ArrayList<>();
+        mangloaisp.add(0,new LoaiSP(0,"Trang Chính","https://icons.iconarchive.com/icons/fps.hu/free-christmas-flat-circle/512/home-icon.png"));
+
+        loaispAdapter = new LoaispAdapter(mangloaisp,getApplicationContext());
+        listViewmanhinhchinh.setAdapter(loaispAdapter);
     }
 }
