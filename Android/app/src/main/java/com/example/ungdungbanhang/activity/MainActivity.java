@@ -25,7 +25,9 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.ungdungbanhang.R;
 import com.example.ungdungbanhang.adapter.LoaispAdapter;
+import com.example.ungdungbanhang.adapter.SpAdapter;
 import com.example.ungdungbanhang.model.LoaiSP;
+import com.example.ungdungbanhang.model.SanPham;
 import com.example.ungdungbanhang.ultil.Server;
 import com.example.ungdungbanhang.ultil.checkconnect;
 import com.google.android.material.navigation.NavigationView;
@@ -50,6 +52,8 @@ public class MainActivity extends AppCompatActivity {
     int id = 0;
     String tenloaisp = "";
     String hinhanhloaisp = "";
+    ArrayList<SanPham> mangsanpham;
+    SpAdapter spAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,12 +69,12 @@ public class MainActivity extends AppCompatActivity {
             ActionBar();
             ActionViewFlipper();
             GetDuLieuLoaisp();
+            //GetDuLieuSPMoiNhat();
         }else {
             checkconnect.ShowToast_Short(getApplicationContext(),"Bạn hãy kiểm tra lại kết nối");
         }
 
     }
-
 
     private void GetDuLieuLoaisp() {
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
@@ -107,9 +111,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void ActionViewFlipper() {
         ArrayList<String> mangquangcao = new ArrayList<>();
-        mangquangcao.add("https://www.thongtincongnghe.com/sites/default/files/images/2012/1/13/img-1326420488-2.jpg");
-        mangquangcao.add("https://www.thongtincongnghe.com/sites/default/files/images/2012/1/13/img-1326420488-3.jpg");
-        mangquangcao.add("https://www.thongtincongnghe.com/sites/default/files/images/2012/1/13/img-1326420488-4.jpg");
+        mangquangcao.add("https://img4.thuthuatphanmem.vn/uploads/2020/06/26/banner-dien-may-khuyen-mai-tet_033704418.png");
+        mangquangcao.add("https://intphcm.com/data/upload/banner-la-gi.jpg");
+        mangquangcao.add("https://thietkehaithanh.com/wp-content/uploads/2019/06/huong-dan-thiet-ke-banner-dien-thoai-bang-photoshop.jpg");
+        mangquangcao.add("https://www.bing.com/th/id/OIP.MNwQwcD3_QrWC0_JsuB1XAHaEH?w=306&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7");
         for(int i = 0;i<mangquangcao.size();i++){
             ImageView imageView = new ImageView(getApplicationContext());
             Picasso.get().load(mangquangcao.get(i)).into(imageView);
@@ -145,7 +150,6 @@ public class MainActivity extends AppCompatActivity {
         drawerLayout = (DrawerLayout) findViewById(R.id.drawerlayout);
         mangloaisp = new ArrayList<>();
         mangloaisp.add(0,new LoaiSP(0,"Trang Chính","https://icons.iconarchive.com/icons/fps.hu/free-christmas-flat-circle/512/home-icon.png"));
-
         loaispAdapter = new LoaispAdapter(mangloaisp,getApplicationContext());
         listViewmanhinhchinh.setAdapter(loaispAdapter);
     }

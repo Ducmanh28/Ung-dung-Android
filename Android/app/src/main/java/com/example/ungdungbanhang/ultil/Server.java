@@ -10,8 +10,8 @@ public class Server {
 
    public static String localhost ="192.168.1.92:80";
 
-    public static String duongDanLoaiSanPham ="http://"+ localhost +"/Server/getloaisanpham.php";
-    public static String duongDanSanPhamMoiNhat="http://"+ localhost+ "/Server/getsanphammoinhat.php";
+    public static String duongDanLoaiSanPham ="http://"+ localhost +"/Server/getloaisp.php";
+    public static String duongDanSanPhamMoiNhat="http://"+ localhost+ "/Server/getspmoinhat.php";
     public static String duongDanGiay = "http://"+ localhost+ "/Server/getsanpham.php?page=";
     public static String duongDanSanPhamFlashSale = "http://"+ localhost+ "/Server/getsanphamflashsale.php";
     public static String duongDanThongTinKhachHang ="http://"+ localhost +"/Server/thongtinkhachhang.php";
