@@ -61,6 +61,16 @@ public class SpAdapter extends RecyclerView.Adapter<SpAdapter.ItemHolder> {
             imghinhsanpham = itemView.findViewById(R.id.imageviewsp);
             txttensanpham = itemView.findViewById(R.id.textviewtensp);
             txtgiasanpham = itemView.findViewById(R.id.textviewgiasanpham);
+            /*itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent=new Intent(context,ChiTietSanPham.class);
+                    intent.putExtra("thongtinsanpham",arraysanpham.get(getAdapterPosition()));
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    checkconnect.ShowToast_Short(context,arraysanpham.get(getAdapterPosition()).getTensanpham());
+                    context.startActivity(intent);
+                }
+            });*/
         }
     }
 }

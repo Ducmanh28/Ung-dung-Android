@@ -1,7 +1,6 @@
 package com.example.ungdungbanhang.activity;
 
 import android.os.Bundle;
-import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
@@ -10,12 +9,12 @@ import android.widget.ViewFlipper;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
 import androidx.core.view.GravityCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.RequestQueue;
@@ -38,6 +37,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -69,43 +69,73 @@ public class MainActivity extends AppCompatActivity {
             ActionBar();
             ActionViewFlipper();
             GetDuLieuLoaisp();
-            //GetDuLieuSPMoiNhat();
+            GetDuLieuSPMoiNhat();
         }else {
             checkconnect.ShowToast_Short(getApplicationContext(),"Bạn hãy kiểm tra lại kết nối");
         }
 
     }
 
-    private void GetDuLieuLoaisp() {
+    private void GetDuLieuSPMoiNhat() {
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Server.duongDanLoaiSanPham, new Response.Listener<JSONArray>() {
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Server.duongDanSanPhamMoiNhat, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
-                if(response != null){
-                    for (int i =0;i<response.length();i++){
+                if (response != null){
+                    int Id = 0;
+                    String Tensanpham = "";
+                    Integer Giasanpham = 0;
+                    String Hinhanhsanpham = "";
+                    String Motasanpham = "";
+                    int Idsanpham = 0;
+                    for (int i = 0; i< response.length();i++){
                         try {
                             JSONObject jsonObject = response.getJSONObject(i);
-                            id = jsonObject.getInt("id");
-                            tenloaisp = jsonObject.getString("tenloaisp");
-                            hinhanhloaisp = jsonObject.getString(("hinhanhloaisp"));
-                            mangloaisp.add(new LoaiSP(id,tenloaisp,hinhanhloaisp));
-                            loaispAdapter.notifyDataSetChanged();
+                            Id = jsonObject.getInt("id");
+                            Tensanpham = jsonObject.getString("tensanpham");
+                            Giasanpham = jsonObject.getInt("giasanpham");
+                            Hinhanhsanpham = jsonObject.getString("hinhanhsanpham");
+                            Motasanpham = jsonObject.getString("hinhanhsanpham");
+                            Idsanpham = jsonObject.getInt("idsanpham");
+                            mangsanpham.add(new SanPham(Id, Tensanpham, Giasanpham, Hinhanhsanpham, Motasanpham, Idsanpham));
+                            spAdapter.notifyDataSetChanged();
                         } catch (JSONException e) {
-                            throw new RuntimeException(e);
+                            e.printStackTrace();
                         }
                     }
-                    mangloaisp.add(3,new LoaiSP(0,"Liên Hệ","https://cdn1.iconfinder.com/data/icons/mix-color-3/502/Untitled-12-512.png"));
-                    mangloaisp.add(4,new LoaiSP(0,"Thông Tin Cá Nhân","https://cdn0.iconfinder.com/data/icons/leto-insurance-1/64/insurance_man_shield_man-256.png"));
-
-
                 }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
-                checkconnect.ShowToast_Short(getApplicationContext(), volleyError.toString());
+
             }
         });
+    requestQueue.add(jsonArrayRequest);
+    }
+
+    private void GetDuLieuLoaisp() {
+        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Server.duongDanLoaiSanPham, response -> {
+            if(response != null){
+                for (int i =0;i<response.length();i++){
+                    try {
+                        JSONObject jsonObject = response.getJSONObject(i);
+                        id = jsonObject.getInt("id");
+                        tenloaisp = jsonObject.getString("tenloaisp");
+                        hinhanhloaisp = jsonObject.getString(("hinhanhloaisp"));
+                        mangloaisp.add(new LoaiSP(id,tenloaisp,hinhanhloaisp));
+                        loaispAdapter.notifyDataSetChanged();
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+                mangloaisp.add(3,new LoaiSP(0,"Liên Hệ","https://cdn1.iconfinder.com/data/icons/mix-color-3/502/Untitled-12-512.png"));
+                mangloaisp.add(4,new LoaiSP(0,"Thông Tin Cá Nhân","https://cdn0.iconfinder.com/data/icons/leto-insurance-1/64/insurance_man_shield_man-256.png"));
+
+
+            }
+        }, volleyError -> checkconnect.ShowToast_Short(getApplicationContext(), volleyError.toString()));
         requestQueue.add(jsonArrayRequest);
     }
 
@@ -131,26 +161,27 @@ public class MainActivity extends AppCompatActivity {
 
     private void ActionBar() {
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         toolbar.setNavigationIcon(android.R.drawable.ic_menu_sort_by_size);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                drawerLayout.openDrawer(GravityCompat.START);
-            }
-        });
+        toolbar.setNavigationOnClickListener(view -> drawerLayout.openDrawer(GravityCompat.START));
     }
 
     private void Anhxa() {
-        toolbar = (Toolbar) findViewById(R.id.toolbarmanhinhchinh);
-        viewFlipper = (ViewFlipper) findViewById(R.id.viewflipper);
-        recyclerViewmanhinhchinh = (RecyclerView) findViewById(R.id.recyclerview);
-        navigationView = (NavigationView) findViewById(R.id.navigationview);
-        listViewmanhinhchinh = (ListView) findViewById(R.id.listviewmanhinhchinh);
-        drawerLayout = (DrawerLayout) findViewById(R.id.drawerlayout);
+        toolbar = findViewById(R.id.toolbarmanhinhchinh);
+        viewFlipper = findViewById(R.id.viewflipper);
+        recyclerViewmanhinhchinh = findViewById(R.id.recyclerview);
+        navigationView = findViewById(R.id.navigationview);
+        listViewmanhinhchinh = findViewById(R.id.listviewmanhinhchinh);
+        drawerLayout = findViewById(R.id.drawerlayout);
         mangloaisp = new ArrayList<>();
         mangloaisp.add(0,new LoaiSP(0,"Trang Chính","https://icons.iconarchive.com/icons/fps.hu/free-christmas-flat-circle/512/home-icon.png"));
         loaispAdapter = new LoaispAdapter(mangloaisp,getApplicationContext());
         listViewmanhinhchinh.setAdapter(loaispAdapter);
+
+        mangsanpham=new ArrayList<>();
+        spAdapter =new SpAdapter(getApplicationContext(),mangsanpham);
+        recyclerViewmanhinhchinh.setHasFixedSize(true);
+        recyclerViewmanhinhchinh.setLayoutManager(new GridLayoutManager(getApplicationContext(),2));
+        recyclerViewmanhinhchinh.setAdapter(spAdapter);
     }
 }
