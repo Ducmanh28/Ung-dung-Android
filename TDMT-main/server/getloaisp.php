@@ -1,6 +1,6 @@
 <?php
 include "connect.php";  
-$query = "SELECT * FROM `sanpham`";  
+$query = "SELECT * FROM `loaisanpham`";  
 $data = mysqli_query($conn, $query);
 $result = array();
 while($row = mysqli_fetch_assoc($data)) {
